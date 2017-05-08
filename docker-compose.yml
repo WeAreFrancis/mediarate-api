@@ -30,6 +30,7 @@ services:
       POSTGRES_USER: ${MEDIARATE_POSTGRES_USER}
       POSTGRES_PASSWORD: ${MEDIARATE_POSTGRES_PASSWORD}
       DB_NAME: mediarate
+      DB_HOST: 172.0.0.10
     restart: always
     networks:
       auth:
