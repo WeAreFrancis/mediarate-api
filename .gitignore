@@ -1,0 +1,9 @@
+# Docker
+data/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Maven
+target/
