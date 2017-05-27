@@ -6,9 +6,11 @@
 
 ## Run
 ```
-export MEDIARATE_POSTGRES_USER=user
-export MEDIARATE_POSTGRES_PASSWORD=password
+export AUTH_JWT_SECRET=my-secret
+export AUTH_SMTP_HOST=smtp-host
+export AUTH_SMTP_PORT=smtp-port
+export AUTH_SMTP_USER=smtp-user
+export AUTH_SMTP_PASSWORD=smtp-password
 
-mvn clean package
 docker-compose up -d
 ```
