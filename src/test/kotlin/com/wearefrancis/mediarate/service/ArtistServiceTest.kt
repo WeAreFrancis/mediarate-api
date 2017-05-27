@@ -8,8 +8,10 @@ import com.wearefrancis.mediarate.domain.Artist
 import com.wearefrancis.mediarate.dto.ReadArtistDTO
 import com.wearefrancis.mediarate.dto.WriteArtistDTO
 import com.wearefrancis.mediarate.dto.mapper.ReadArtistDTOMapper
+import com.wearefrancis.mediarate.exception.EntityNotFoundException
 import com.wearefrancis.mediarate.repository.ArtistRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.util.*
@@ -56,5 +58,44 @@ class ArtistServiceTest {
         assertThat(artistDTO).isSameAs(readArtistDTO)
         verify(artistRepository).save(any<Artist>())
         verify(readArtistDTOMapper).convert(any<Artist>())
+    }
+
+    @Test
+    fun getByIdShouldThrowEntityNotFoundExceptionIfArtistIsNotFound() {
+        // GIVEN
+        val artistId = UUID.randomUUID()
+
+        try {
+            // WHEN
+            artistService.getById(artistId)
+
+            // THEN
+            fail()
+        } catch (exception: EntityNotFoundException) {
+            // THEN
+            assertThat(exception.message).isEqualTo("Artist $artistId not found")
+            verify(artistRepository).findOne(artistId)
+        }
+    }
+
+    @Test
+    fun getByIdShouldReturnArtistThatHasTheGivenId() {
+        // GIVEN
+        val artist = Artist()
+        val readArtistDTO = ReadArtistDTO(
+                firstName = artist.firstName,
+                id = artist.id,
+                lastName = artist.lastName
+        )
+        whenever(artistRepository.findOne(artist.id)).thenReturn(artist)
+        whenever(readArtistDTOMapper.convert(artist)).thenReturn(readArtistDTO)
+
+        // WHEN
+        val artistDTO = artistService.getById(artist.id)
+
+        // THEN
+        assertThat(artistDTO).isSameAs(readArtistDTO)
+        verify(artistRepository).findOne(artist.id)
+        verify(readArtistDTOMapper).convert(artist)
     }
 }
