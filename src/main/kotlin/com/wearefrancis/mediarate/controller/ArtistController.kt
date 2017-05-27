@@ -18,4 +18,8 @@ class ArtistController(
 
     @GetMapping("/{artistId:$UUID_REGEX}")
     fun getById(@PathVariable artistId: UUID): ReadArtistDTO = artistService.getById(artistId)
+
+    @GetMapping
+    fun search(@RequestParam firstName: String,  @RequestParam lastName: String)
+            = artistService.search(firstName, lastName)
 }

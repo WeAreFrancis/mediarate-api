@@ -32,4 +32,9 @@ class ArtistService(
         val artist = artistRepository.findOne(id) ?: throw EntityNotFoundException("Artist $id not found")
         return readArtistDTOMapper.convert(artist)
     }
+
+    fun search(firstName: String, lastName: String): List<ReadArtistDTO> {
+        val artists = artistRepository.findAllByFirstNameLikeAndLastNameLike(firstName, lastName)
+        return artists.map(readArtistDTOMapper::convert)
+    }
 }
