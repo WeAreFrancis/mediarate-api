@@ -28,6 +28,7 @@ open class JwtAuthenticationFilter(
             authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
             SecurityContextHolder.getContext().authentication = authentication
             logger.info("User ${user.username} authenticated")
+            filterChain!!.doFilter(request, response)
         } catch (exception: BadCredentialsException){
             response!!.sendError(HttpStatus.UNAUTHORIZED.value())
         } catch (exception: ForbiddenException) {
