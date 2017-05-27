@@ -22,17 +22,21 @@ open class JwtAuthenticationFilter(
             request: HttpServletRequest?, response: HttpServletResponse?, filterChain: FilterChain?
     ) {
         val authorizationValue = request!!.getHeader(HttpHeaders.AUTHORIZATION)
-        try {
-            val user = userClient.self(authorizationValue)
-            val authentication = UsernamePasswordAuthenticationToken(user, null, listOf(user.role))
-            authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
-            SecurityContextHolder.getContext().authentication = authentication
-            logger.info("User ${user.username} authenticated")
-            filterChain!!.doFilter(request, response)
-        } catch (exception: BadCredentialsException){
+        if (authorizationValue == null) {
             response!!.sendError(HttpStatus.UNAUTHORIZED.value())
-        } catch (exception: ForbiddenException) {
-            response!!.sendError(HttpStatus.FORBIDDEN.value())
+        } else {
+            try {
+                val user = userClient.self(authorizationValue)
+                val authentication = UsernamePasswordAuthenticationToken(user, null, listOf(user.role))
+                authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
+                SecurityContextHolder.getContext().authentication = authentication
+                logger.info("User ${user.username} authenticated")
+                filterChain!!.doFilter(request, response)
+            } catch (exception: BadCredentialsException) {
+                response!!.sendError(HttpStatus.UNAUTHORIZED.value())
+            } catch (exception: ForbiddenException) {
+                response!!.sendError(HttpStatus.FORBIDDEN.value())
+            }
         }
     }
 }
