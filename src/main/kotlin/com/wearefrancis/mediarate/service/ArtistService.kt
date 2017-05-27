@@ -16,15 +16,16 @@ class ArtistService(
         private val readArtistDTOMapper: ReadArtistDTOMapper
 ) {
     companion object {
-        val logger = LoggerFactory.getLogger(ArtistService::class.java)
+        val logger = LoggerFactory.getLogger(ArtistService::class.java)!!
     }
 
     fun create(artistDTO: WriteArtistDTO): ReadArtistDTO {
-        val artist = Artist(
+        val artist = artistRepository.save(Artist(
                 firstName = artistDTO.firstName,
                 lastName = artistDTO.lastName
-        )
-        return readArtistDTOMapper.convert(artistRepository.save(artist))
+        ))
+        logger.info("Artist ${artist.firstName} ${artist.lastName} (${artist.id}) created")
+        return readArtistDTOMapper.convert(artist)
     }
 
     fun getById(id: UUID): ReadArtistDTO {
